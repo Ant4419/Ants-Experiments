@@ -1,0 +1,3 @@
+[default]
+src = "dex/contracts"
+out = "out"

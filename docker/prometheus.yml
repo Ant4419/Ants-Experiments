@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 100ms
+
+scrape_configs:
+  - job_name: 'mock_cex'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['cex:8000']
+  - job_name: 'dex'
+    static_configs:
+      - targets: ['dex:9000']
