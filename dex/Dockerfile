@@ -2,5 +2,7 @@
 FROM ghcr.io/foundry-rs/foundry:latest
 WORKDIR /app
 COPY . .
-# Add DEX-specific setup here
-CMD ["anvil", "--host", "0.0.0.0", "--port", "8545", "--chain-id", "12345"]
+USER root
+RUN apt-get update && apt-get install -y curl
+USER foundry
+CMD ["anvil", "--host", "0.0.0.0", "--port", "9000", "--chain-id", "12345"]

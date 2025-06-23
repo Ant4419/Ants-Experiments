@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, Response
 from pydantic import BaseModel
 from typing import List
@@ -8,6 +9,8 @@ import random
 from threading import Thread
 
 app = FastAPI(title="Mock CEX API")
+
+CEX_PORT = int(os.getenv("CEX_PORT", 8000))
 
 # Simulate multiple tokens
 tokens = [
@@ -40,9 +43,16 @@ class OrderResponse(BaseModel):
     status: str  # 'open', 'closed', etc.
 
 @app.get("/ticker")
-def get_ticker(symbol: str = "ETH/USDT"):
-    """Return current ticker for a given symbol."""
-    return ticker_states.get(symbol, ticker_states["ETH/USDT"])
+def get_ticker(symbol: str = "TestTokenA/USDT"):
+    try:
+        print(f"/ticker called with symbol: {symbol}")
+        print(f"Available ticker_states keys: {list(ticker_states.keys())}")
+        result = ticker_states.get(symbol, ticker_states.get("TestTokenA/USDT"))
+        print(f"Result: {result}")
+        return result
+    except Exception as e:
+        print(f"Error in /ticker: {e}")
+        return {"error": str(e)}, 500
 
 @app.get("/tickers")
 def get_all_tickers():
@@ -152,4 +162,4 @@ def price_update_loop():
 Thread(target=price_update_loop, daemon=True).start()
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=CEX_PORT, reload=True)
